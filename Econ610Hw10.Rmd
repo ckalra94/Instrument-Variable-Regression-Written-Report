@@ -1,0 +1,78 @@
+---
+title: "Econ610Hw10"
+author: "Chris Kalra"
+date: "11/6/2018"
+output: html_document
+---
+
+#Exercise 1
+```{r}
+#a)
+#wage=data
+regr1a=lm(lwage~sibs, data=wage)
+summary(regr1a)
+#b)
+regr1b=lm(educ~brthord, data=wage)
+summary(regr1b)
+#c)
+#install.packages("AER")
+library('AER')
+regr1c=ivreg(lwage ~ educ | brthord, data=wage)
+summary(regr1c)
+#d)
+regr1d=lm(educ~sibs+brthord, data=wage)
+summary(regr1d)
+#e)
+regr1e=ivreg(lwage~educ+sibs|brthord + sibs, data=wage)
+summary(regr1e)
+#f)
+fit=fitted.values(regr1d)
+cor(wage$sibs, fit, use="pairwise.complete.obs")
+```
+
+#Exercise 2
+```{r}
+#a)
+#fertility=data
+regr2a=lm(children~educ + age + I(age^2), data=fertility)
+summary(regr2a)
+#b)
+regr2b=lm(educ~age+I(age^2)+frsthalf, data=fertility)
+summary(regr2b)
+#c)
+regr2c=ivreg(children~educ+age+I(age^2) | frsthalf + age + I(age^2), data=fertility)
+summary(regr2c)
+```
+
+#Exercise 3
+```{r}
+#a)
+#murder=data
+which.max(murder$exec)
+#b)
+library(plm)
+regr3b = plm(mrdrte~d93 + exec + unem, data=murder, subset=d90+d93==1, model='pooling', index=c("id", "year"))
+summary(regr3b)
+#c)
+regr3c=plm(mrdrte~d93 + exec + unem, data=murder, subset=d90+d93==1, model='within', index=c("id", "year"))
+summary(regr3c)
+#d)
+regr3d=lm(cexec ~ cexec_1, data=murder)
+summary(regr3d)
+#e)
+regr3e=ivreg(cmrdrte ~ cexec + cunem | cexec_1 + cunem, data=murder)
+summary(regr3e)
+```
+
+#Exercise 4
+```{r}
+#a)
+regr4a=ivreg(lwage ~ educ + exper + tenure + black | sibs + exper + tenure + black, data=wage)
+summary(regr4a)
+#b)
+regr4b_1=lm(educ~sibs+exper+tenure+black, data=wage)
+wage$pred=predict.lm(regr4b_1)
+regr4b_2=lm(lwage ~ pred + exper + tenure + black, data=wage)
+summary(regr4b_2)
+```
+
